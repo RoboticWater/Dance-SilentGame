@@ -5,38 +5,40 @@ Armature focus;
 float start, end;
 boolean animate = false;
 int animateStart = 0;
-float flarp = 0;
+int revs = 0;
+float pN, pdN, ppN;
 float dRot = 0;
-PVector p = new PVector(20, 0);
+float scrubberX = 0;
 void setup() {
-  size(640, 480);
-  smooth();
+  size(640, 480, P3D);
+  smooth(8);
+  strokeWeight(2);
   armatures = new ArrayList();
   tracks = new HashMap();
   curKeyframe = new HashMap();
   
-  armatures.add(new Armature(300, 300, 100, PI));
+  armatures.add(new Armature(300, 300, 50, 0));
   tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
   curKeyframe.put(armatures.get(armatures.size() - 1), null);
   
-  //armatures.add(new Armature(armatures.get(0), 50, PI));
-  //tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
-  //curKeyframe.put(armatures.get(armatures.size() - 1), null);
+  armatures.add(new Armature(armatures.get(0), 50, 0));
+  tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
+  curKeyframe.put(armatures.get(armatures.size() - 1), null);
   
-  //armatures.add(new Armature(armatures.get(1), 50, PI));
-  //tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
-  //curKeyframe.put(armatures.get(armatures.size() - 1), null);
+  armatures.add(new Armature(armatures.get(1), 50, 0));
+  tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
+  curKeyframe.put(armatures.get(armatures.size() - 1), null);
 
   
 }
 void draw() {
-
   background(255);
-  p.rotate(dRot);
-  line(100, 100, 100 + p.x, 100+ p.y);
-  p = new PVector(20, 0);
-  //flarp += 0.01;
-  //armatures.get(0).animate(armatures.get(0).org, flarp);
+  if (mouseY < armatures.size() * 20 && mousePressed) {
+    scrubberX = int(mouseX / (width / 10))* (width / 10);
+  }
+  stroke(#ff0000);
+  line(scrubberX, 0, scrubberX, armatures.size() * 20);
+  //println(dRot);
   if (animate) {
     for (int i = 0; i < armatures.size(); i++) {
       Armature a = armatures.get(i);
@@ -44,20 +46,19 @@ void draw() {
       if (cki == -1) continue;
       //println(i);
       Keyframe ck = tracks.get(a).get(cki);
-      float r = map(millis() - animateStart, ck.sTime, ck.eTime, ck.sAnim, ck.eAnim);
-      //println(cki);
-      //println(millis() - animateStart + " " + ck.sTime + " " + ck.eTime);
-      //println(ck.sAnim + " " + ck.eAnim + " " + r + " " + abs(r - ck.eAnim));
-      //println("=========");
+      //float r = map(millis() - animateStart, ck.sTime, ck.eTime, ck.sAnim, ck.eAnim);
+      float r = (millis() - animateStart - ck.sTime) * ck.vAnim + ck.sAnim;
       if (millis() - animateStart > ck.eTime) {
         curKeyframe.put(a, cki + 1 < tracks.get(a).size() ? cki + 1 : -1);
-        a.animate(a.org, ck.eAnim, ck.dir);
+        a.animate(ck.eAnim);
         continue;
       }
-      a.animate(a.org, r, ck.dir);
+      a.animate(r);
     }
   }
+  pushMatrix();
   armatures.get(0).draw();
+  popMatrix();
   for(int i = 0; i < armatures.size(); i++) {
     stroke(0);
     fill(255);
@@ -72,11 +73,18 @@ void draw() {
   //}
 }
 void mouseReleased() {
-  if(abs(start - focus.ext.heading()) > 0.1) {
-    end = focus.ext.heading();
+  if(focus != null && abs(start - focus.angle) > 0.1) {
+    end = dRot;
+    println(dRot);
     ArrayList<Keyframe> t = tracks.get(focus);
-    t.add(new Keyframe(start, end, t.size() == 0 ? 0 : t.get(t.size() - 1).eTime, dRot > 0 ? -1 : 1));
+    //IMPLEMENT SCRUBBER OFFSET
+    t.add(new Keyframe(t.size() == 0 ? 0 : t.get(t.size() - 1).eAnim,
+                       end,
+                       t.size() == 0 ? 0 : t.get(t.size() - 1).eTime));
   }
+  dRot = 0;
+  pN = 0;
+  pdN = 0;
 }
 void keyPressed() {
   if (key == ' ') {

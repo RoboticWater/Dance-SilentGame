@@ -1,5 +1,5 @@
 class Armature {
-  PVector org, ext;
+  PVector org;
   float mag;
   float angle;
   Armature parent, child;
@@ -10,55 +10,56 @@ class Armature {
   //}
   Armature(float px, float py, float mag, float rot) {
     this.org = new PVector(px, py);
-    this.ext = PVector.fromAngle(rot);
-    this.ext.setMag(mag);
     this.mag = mag;
-    this.angle = 0;
-  }
-  Armature(PVector org, PVector ext) {
-    this.org = org.get();
-    this.ext = ext.get();
-    this.mag = ext.mag();
-    this.angle = 0;
+    this.angle = rot;
   }
   Armature(Armature parent, float mag, float rot) {
-    this.ext = PVector.fromAngle(rot);
-    this.ext.setMag(mag);
     this.org = new PVector();
     this.mag = mag;
     this.parent = parent;
     this.parent.child = this;
-    this.org.set(PVector.add(parent.org, parent.ext));
-    this.angle = 0;
-    //addParent(parent);
+    this.angle = rot;
   }
   void draw() {
     noFill();
     stroke(0);
-    line(org.x, org.y, org.x + ext.x, org.y + ext.y);
+    if (parent == null) translate(org.x, org.y);
+    else translate(parent.mag, 0);
+    rotate(angle);
+    line(0, 0, mag, 0);
     if (hovered() || this == focus) {
       stroke(#ff1111);
-      ellipse(org.x + ext.x, org.y + ext.y, 20, 20);
+      ellipse(mag, 0, 20, 20);
       stroke(#1111ff);
-      ellipse(org.x, org.y, mag * 2, mag * 2);
+      ellipse(0, 0, mag * 2, mag * 2);
       if (mousePressed) {
-        if (focus == null) start = ext.heading();
-        focus = this;
-        PVector n = new PVector(mouseX - org.x, mouseY - org.y);
-        float a = n.heading();
-        float b = ext.heading();
-        n.setMag(mag);
-        println(dRot);
-        if ((a<0)^(b<0) && abs(a) > HALF_PI) {
-          if(a > b) b += TWO_PI;
-          else a += TWO_PI;
+        PVector n = new PVector(mouseX - screenX(0, 0, 0), mouseY - screenY(0, 0, 0));
+        PVector c = new PVector(screenX(mag, 0, 0) - screenX(0, 0, 0), screenY(mag, 0, 0) - screenY(0, 0, 0));
+        //println(PVector.angleBetween(n, c));
+        if (focus == null) {
+          revs = 0;
+          start = angle;
+          focus = this;
         }
-        //CHANGE ROTATIONS TO WORK ADDATIVELY NOT STATICALLY
-        dRot += (a - b);
-        if (child != null) {
-          //child.update(PVector.add(n, org), a - b);
+        else {
+          if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) != sign(pdN)) {
+            dRot += -TWO_PI * sign(n.heading() - c.heading());
+            println(dRot);
+            println(pN);
+            println(pdN);
+            println(n.heading());
+            println((n.heading() - c.heading()));
+            println(ppN);
+            println();
+          }
+          //if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) == sign(pdN))
+          //  revs += sign(n.heading() - c.heading());
         }
-        ext.set(n);
+        angle += n.heading() - c.heading();
+        ppN = pN;
+        pN = n.heading();
+        pdN = n.heading() - c.heading();
+        dRot += pdN;
       }
       else {
         focus = null;
@@ -67,29 +68,14 @@ class Armature {
     if (child != null) child.draw();
   }
   boolean hovered() {
-    return dist(mouseX, mouseY, org.x + ext.x, org.y + ext.y) < 20 && focus == null;
+    return dist(mouseX, mouseY, screenX(mag, 0, 0), screenY(mag, 0, 0)) < 20 && focus == null;
   }
-  void addParent(Armature p) {
-    parent = p;
-    p.child = this;
-    this.org.set(PVector.add(p.org, p.ext));
+  void animate(float b) {
+    angle = b;
   }
-  void addChild(Armature c) {
-    child = c;
-    c.parent = this;
-    c.org.set(PVector.add(org, ext));
-  }
-  void update(PVector p, float rot) {
-    //println(rot);
-    ext.rotate(rot);
-    org.set(p);
-    if (child !=null) child.update(PVector.add(ext, org), rot);
-  }
-  void animate(PVector p, float rot, int dir) {
-    //println(rot);
-    float r = rot - ext.heading();//dir < 0 ?  : ext.heading() - rot;
-    ext.rotate(r);
-    org.set(p);
-    if (child !=null) child.animate(PVector.add(ext, org), rot, dir);
-  }
+}
+
+int sign(float a) {
+  if ((int)Math.signum(a) > -1) return 1;
+  else return -1;
 }

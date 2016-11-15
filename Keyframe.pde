@@ -1,17 +1,18 @@
 class Keyframe {
   float sAnim;
   float eAnim;
+  float vAnim;
   float sTime;
   float eTime;
-  int dir;
   //Function;
   //KeyframeType;
-  Keyframe(float sAnim, float eAnim, float sTime, int dir) {
+  Keyframe(float sAnim, float dAnim, float sTime) {
+    float dTime = 1000;
     this.sAnim = sAnim;
-    this.eAnim = eAnim;
     this.sTime = sTime;
-    this.eTime = sTime + 1000;
-    this.dir = dir;
+    this.eTime = sTime + dTime;
+    this.eAnim = sAnim + dAnim;
+    this.vAnim = dAnim / dTime;
     //this.Function = LINEAR;
     //this.KeyframeType = KEYFRAME;
   }
