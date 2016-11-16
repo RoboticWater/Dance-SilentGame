@@ -49,14 +49,14 @@ class Armature {
             println(pdN);
             println(n.heading());
             println((n.heading() - c.heading()));
-            println(ppN);
+            //println(ppN);
             println();
           }
           //if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) == sign(pdN))
           //  revs += sign(n.heading() - c.heading());
         }
         angle += n.heading() - c.heading();
-        ppN = pN;
+        //ppN = pN;
         pN = n.heading();
         pdN = n.heading() - c.heading();
         dRot += pdN;

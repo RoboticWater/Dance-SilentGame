@@ -6,7 +6,7 @@ float start, end;
 boolean animate = false;
 int animateStart = 0;
 int revs = 0;
-float pN, pdN, ppN;
+float pN, pdN;
 float dRot = 0;
 float scrubberX = 0;
 void setup() {
