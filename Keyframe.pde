@@ -34,7 +34,7 @@ class Keyframe {
       float loc = int(mouseX / (width / (totalTime * step)))* (width / (totalTime * step));
       eTime = map(loc, 0, width, 0, totalTime * 1000);
       vAnim = dAnim / (eTime - sTime);
-    } else {
+    } else if (kFocus == this) {
       kFocus = null;
     }
     if (h == 2 || kFocus == this) {
