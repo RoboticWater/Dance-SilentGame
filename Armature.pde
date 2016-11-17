@@ -44,13 +44,13 @@ class Armature {
         else {
           if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) != sign(pdN)) {
             dRot += -TWO_PI * sign(n.heading() - c.heading());
-            println(dRot);
-            println(pN);
-            println(pdN);
-            println(n.heading());
-            println((n.heading() - c.heading()));
-            //println(ppN);
-            println();
+            //println(dRot);
+            //println(pN);
+            //println(pdN);
+            //println(n.heading());
+            //println((n.heading() - c.heading()));
+            ////println(ppN);
+            //println();
           }
           //if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) == sign(pdN))
           //  revs += sign(n.heading() - c.heading());

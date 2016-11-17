@@ -2,6 +2,7 @@ ArrayList<Armature> armatures;
 HashMap<Armature, ArrayList<Keyframe>> tracks;
 HashMap<Armature, Integer> curKeyframe;
 Armature focus;
+Keyframe kFocus;
 float start, end;
 boolean animate = false;
 int animateStart = 0;
@@ -9,6 +10,9 @@ int revs = 0;
 float pN, pdN;
 float dRot = 0;
 float scrubberX = 0;
+float trackSize = 20;
+int totalTime = 10;
+float step = 4;
 void setup() {
   size(640, 480, P3D);
   smooth(8);
@@ -33,11 +37,9 @@ void setup() {
 }
 void draw() {
   background(255);
-  if (mouseY < armatures.size() * 20 && mousePressed) {
-    scrubberX = int(mouseX / (width / 10))* (width / 10);
+  if (mouseY < armatures.size() * trackSize && mousePressed) {
+    scrubberX = int(mouseX / (width / (totalTime * step)))* (width / (totalTime * step));
   }
-  stroke(#ff0000);
-  line(scrubberX, 0, scrubberX, armatures.size() * 20);
   //println(dRot);
   if (animate) {
     for (int i = 0; i < armatures.size(); i++) {
@@ -62,15 +64,17 @@ void draw() {
   for(int i = 0; i < armatures.size(); i++) {
     stroke(0);
     fill(255);
-    rect(0, i * 20, width, 20);
+    rect(0, i * trackSize, width, trackSize);
     for (Keyframe k : tracks.get(armatures.get(i))) {
-      k.draw(i * 20);
+      k.draw(i);
     }
   }
   //println("----");
   //for (Armature a : tracks.keySet()) {
   //  println(tracks.get(a).size());
   //}
+  stroke(#ff0000);
+  line(scrubberX, 0, scrubberX, armatures.size() * 20);
 }
 void mouseReleased() {
   if(focus != null && abs(start - focus.angle) > 0.1) {
