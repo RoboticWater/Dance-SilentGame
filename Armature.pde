@@ -42,9 +42,9 @@ class Armature {
           focus = this;
         }
         else {
-          if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) != sign(pdN)) {
+          if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) != sign(pdN) && abs(n.heading()) > 0.01) {
             dRot += -TWO_PI * sign(n.heading() - c.heading());
-            //println(dRot);
+            println(dRot);
             //println(pN);
             //println(pdN);
             //println(n.heading());

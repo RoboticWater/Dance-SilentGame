@@ -21,15 +21,15 @@ void setup() {
   tracks = new HashMap();
   curKeyframe = new HashMap();
   
-  armatures.add(new Armature(300, 300, 50, 0));
+  armatures.add(new Armature(300, 300, 75, 0));
   tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
   curKeyframe.put(armatures.get(armatures.size() - 1), null);
   
-  armatures.add(new Armature(armatures.get(0), 50, 0));
+  armatures.add(new Armature(armatures.get(0), 75, 0));
   tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
   curKeyframe.put(armatures.get(armatures.size() - 1), null);
   
-  armatures.add(new Armature(armatures.get(1), 50, 0));
+  armatures.add(new Armature(armatures.get(1), 20, 0));
   tracks.put(armatures.get(armatures.size() - 1), new ArrayList());
   curKeyframe.put(armatures.get(armatures.size() - 1), null);
 
