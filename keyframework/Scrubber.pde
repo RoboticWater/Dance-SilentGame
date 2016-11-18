@@ -4,6 +4,6 @@ public class Scrubber {
     
   }
   public void draw() {
-    
+    line();
   }
 }

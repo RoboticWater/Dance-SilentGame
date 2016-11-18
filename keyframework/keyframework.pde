@@ -1,17 +1,20 @@
-//Default Values
-int DEFAULT_KEYFRAME_LENGTH = 1000; //in milliseconds
 //Current Frame Data
 float dRot;
+float pN;
+float pdN;
 float sAngle;
 //Animating Data
 float animStartTime;
 //Focus Pointers
 Limb                focusedLimb;
-ArrayList<KeyFrame> focusedFrame;
-//Dancer
+ArrayList<KeyFrame> focusedFrames;
+//Objects
 Armature dancer;
+Scrubber scrubber;
 //FrameTrack
 FrameTrack frameTrack = new FrameTrack();
+//Song Data
+
 void settings() {
   size(640, 480, P3D);
   String[] args = {"Frame Track"};
@@ -19,7 +22,17 @@ void settings() {
   setDefaults();
 }
 void draw() {
+  background(255);
   dancer.draw();
+}
+void mouseReleased() {
+  if (focusedLimb != null) {
+    focusedLimb = null;
+    println(dRot);
+    dRot = 0;
+    pN   = 0;
+    pdN  = 0;
+  }
 }
 public void setDefaults() {
   //Current Frame Data
@@ -28,8 +41,14 @@ public void setDefaults() {
   //Focus Pointers
   focusedLimb  = null;
   focusedFrame = new ArrayList();
-  //Dancer
+  //Objects
   dancer = new Armature();
+  scrubber = new Scrubber();
   //FrameTrack Variables
   frameTrack.frameTracks = new KeyFrame[dancer.limbs.size()];
+  frameTrack.tHeight = frameTrack.height / dancer.limbs.size();
+  int i = 0;
+  for (String n : dancer.limbs.keySet()) {
+    frameTrack.frameTracks[i++] = new KeyFrame(0, dancer.limbs.get(n).angle);
+  }
 }
