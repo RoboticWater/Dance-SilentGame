@@ -5,18 +5,19 @@ public class Limb {
   color col;
   PVector origin;
   Limb parent;
-  Limb child;
+  ArrayList<Limb> children;
   public Limb(float _x, float _y, float _mag, float _angle, color _col) {
     mag    = _mag;
     angle  = _angle;
     startAngle = _angle;
     col    = _col;
     origin = new PVector(_x, _y);
+    children = new ArrayList();
   }
   public Limb(float _mag, float _angle, color _col, Limb _parent) {
     this(0, 0, _mag, _angle, _col);
     parent = _parent;
-    _parent.child = this;
+    _parent.children.add(this);
   }
   public void draw() {
     pushMatrix();
@@ -27,8 +28,11 @@ public class Limb {
     if (h) {
       stroke(#ff1111);
       ellipse(mag, 0, 20, 20);
-      stroke(#1111ff);
-      arc(0, 0, mag * 2, mag * 2, -dRot, 0);
+      colorMode(HSB);
+      stroke(color((map(dRot, 0, TWO_PI, 0, 255) + 90) % 255, 230, 230));
+      colorMode(RGB);
+      if (dRot >= 0) arc(0, 0, mag * 2, mag * 2, -dRot, 0);
+      else arc(0, 0, mag * 2, mag * 2, 0, -dRot);
       if (mousePressed) {
         if (focusedLimb == null) {
           sAngle = angle;
@@ -37,8 +41,8 @@ public class Limb {
         PVector n = new PVector(mouseX - screenX(0, 0, 0), mouseY - screenY(0, 0, 0));
         PVector c = new PVector(screenX(mag, 0, 0) - screenX(0, 0, 0), screenY(mag, 0, 0) - screenY(0, 0, 0));
         if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) != sign(pdN) && abs(n.heading()) > 0.01) {
-            dRot += -TWO_PI * sign(n.heading() - c.heading());
-            println(dRot + n.heading() - c.heading());
+          dRot += -TWO_PI * sign(n.heading() - c.heading());
+          //println(dRot + n.heading() - c.heading());
         }
         angle += n.heading() - c.heading();
         pN = n.heading();
@@ -52,11 +56,12 @@ public class Limb {
     stroke(h ? lerpColor(col, #ffffff, 0.7) : col);
     strokeWeight(2);
     line(0, 0, mag, 0);
-    if (child != null) child.draw();
+    if (children.size() > 0) {
+      for (Limb c : children) c.draw();
+    }
     popMatrix();
   }
   private void move() {
-    
   }
   private boolean hovered() {
     return dist(mouseX, mouseY, screenX(mag, 0, 0), screenY(mag, 0, 0)) < 10;

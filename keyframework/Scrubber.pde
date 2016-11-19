@@ -4,6 +4,9 @@ public class Scrubber {
     
   }
   public void draw() {
-    line();
+    frameTrack.stroke(#ff1111);
+    frameTrack.strokeWeight(1);
+    frameTrack.line(map(loc, 0, songLen, 0, frameTrack.width),
+                        0, map(loc, 0, songLen, 0, frameTrack.width), frameTrack.height);
   }
 }

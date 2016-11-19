@@ -4,15 +4,20 @@ public class KeyFrame {
   KeyFrame next;
   KeyFrame prev;
   Limb     limb;
-  public KeyFrame(int _time, float _rotate) {
+  public KeyFrame(int _time, float _rotate, Limb _limb) {
     time = _time;
-    dRot = _rotate;
+    rotate = _rotate;
+    limb = _limb;
   }
   public void draw(int track) {
-    pushMatrix();
-    rotate(PI / 4);
-    rect(0, 0, tHeight * 0.7, tHeight * 0.7, CENTER);
-    popMatrix();
+    frameTrack.pushMatrix();
+    frameTrack.rectMode(CENTER);
+    frameTrack.translate(map(time, 0, songLen, 0, width), (track + 0.5) * frameTrack.tHeight);
+    frameTrack.rotate(PI / 4);
+    frameTrack.noStroke();
+    frameTrack.fill(#00aaff);
+    frameTrack.rect(0, 0, frameTrack.tHeight * 0.5, frameTrack.tHeight * 0.5);
+    frameTrack.popMatrix();
     if (next != null) next.draw(track);
   }
   public void animate(int sTime) {
@@ -31,7 +36,7 @@ public class KeyFrame {
         return;
       }
       t--;
-      l.angle = -c/2 * (t*(t-2) - 1) + b;
+      limb.angle = -c/2 * (t*(t-2) - 1) + b;
     }
   }
   public float endRotation() {
@@ -41,7 +46,7 @@ public class KeyFrame {
   public void add(int _time, float _rotate) {
     if (_time > time) {
       if (next == null) {
-        next = new KeyFrame(_time, _rotate);
+        next = new KeyFrame(_time, _rotate, limb);
         next.prev = this;
       } else {
         next.add(_time, _rotate);
@@ -50,11 +55,11 @@ public class KeyFrame {
       rotate = _rotate;
     } else {
       if (next == null) {
-        next = new KeyFrame(time, rotate);
+        next = new KeyFrame(time, rotate, limb);
         next.prev = this;
       } else {
         KeyFrame hold = next;
-        next = new KeyFrame(time, rotate);
+        next = new KeyFrame(time, rotate, limb);
         next.next = hold;
       }
       time = _time;

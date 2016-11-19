@@ -4,7 +4,8 @@ float pN;
 float pdN;
 float sAngle;
 //Animating Data
-float animStartTime;
+float   animStartTime;
+boolean doAnim;
 //Focus Pointers
 Limb                focusedLimb;
 ArrayList<KeyFrame> focusedFrames;
@@ -14,9 +15,11 @@ Scrubber scrubber;
 //FrameTrack
 FrameTrack frameTrack = new FrameTrack();
 //Song Data
-
+int songLen = 30000; //In milliseconds
+int beatLen = 500;   //In milliseconds
 void settings() {
   size(640, 480, P3D);
+  setDefaults();
   String[] args = {"Frame Track"};
   PApplet.runSketch(args, frameTrack);
   setDefaults();
@@ -24,6 +27,7 @@ void settings() {
 void draw() {
   background(255);
   dancer.draw();
+    println(dRot);
 }
 void mouseReleased() {
   if (focusedLimb != null) {
@@ -38,9 +42,12 @@ public void setDefaults() {
   //Current Frame Data
   dRot   = 0;
   sAngle = 0;
+  //Animating Data
+  animStartTime = 0;
+  doAnim = false;
   //Focus Pointers
   focusedLimb  = null;
-  focusedFrame = new ArrayList();
+  focusedFrames = new ArrayList();
   //Objects
   dancer = new Armature();
   scrubber = new Scrubber();
@@ -49,6 +56,6 @@ public void setDefaults() {
   frameTrack.tHeight = frameTrack.height / dancer.limbs.size();
   int i = 0;
   for (String n : dancer.limbs.keySet()) {
-    frameTrack.frameTracks[i++] = new KeyFrame(0, dancer.limbs.get(n).angle);
+    frameTrack.frameTracks[i++] = new KeyFrame(0, dancer.limbs.get(n).angle, dancer.limbs.get(n));
   }
 }
