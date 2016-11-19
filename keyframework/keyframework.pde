@@ -27,15 +27,16 @@ void settings() {
 void draw() {
   background(255);
   dancer.draw();
-    println(dRot);
+  //println(scrubber.loc);
+    //println(dRot);
 }
 void mouseReleased() {
   if (focusedLimb != null) {
-    focusedLimb = null;
-    println(dRot);
+    frameTrack.frameTracks.get(focusedLimb).add(scrubber.loc, dRot);
     dRot = 0;
     pN   = 0;
     pdN  = 0;
+    focusedLimb = null;
   }
 }
 public void setDefaults() {
@@ -52,10 +53,9 @@ public void setDefaults() {
   dancer = new Armature();
   scrubber = new Scrubber();
   //FrameTrack Variables
-  frameTrack.frameTracks = new KeyFrame[dancer.limbs.size()];
-  frameTrack.tHeight = frameTrack.height / dancer.limbs.size();
-  int i = 0;
+  frameTrack.frameTracks = new HashMap();
   for (String n : dancer.limbs.keySet()) {
-    frameTrack.frameTracks[i++] = new KeyFrame(0, dancer.limbs.get(n).angle, dancer.limbs.get(n));
+    frameTrack.frameTracks.put(dancer.limbs.get(n), new KeyFrame(0, dancer.limbs.get(n).angle));
   }
+  frameTrack.tHeight = frameTrack.height / dancer.limbs.size();
 }

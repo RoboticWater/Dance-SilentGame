@@ -6,16 +6,18 @@ public class Limb {
   PVector origin;
   Limb parent;
   ArrayList<Limb> children;
-  public Limb(float _x, float _y, float _mag, float _angle, color _col) {
+  String name;
+  public Limb(float _x, float _y, float _mag, float _angle, color _col, String _name) {
     mag    = _mag;
     angle  = _angle;
     startAngle = _angle;
     col    = _col;
     origin = new PVector(_x, _y);
     children = new ArrayList();
+    name = _name;
   }
-  public Limb(float _mag, float _angle, color _col, Limb _parent) {
-    this(0, 0, _mag, _angle, _col);
+  public Limb(float _mag, float _angle, color _col, String _name, Limb _parent) {
+    this(0, 0, _mag, _angle, _col, _name);
     parent = _parent;
     _parent.children.add(this);
   }
@@ -26,10 +28,11 @@ public class Limb {
     rotate(angle);
     boolean h = (hovered() && focusedLimb == null) || this == focusedLimb;
     if (h) {
+      strokeWeight(2);
       stroke(#ff1111);
       ellipse(mag, 0, 20, 20);
       colorMode(HSB);
-      stroke(color((map(dRot, 0, TWO_PI, 0, 255) + 90) % 255, 230, 230));
+      stroke(color((map(dRot, 0, 5*TWO_PI, 0, 255) + 90) % 255, 230, 230));
       colorMode(RGB);
       if (dRot >= 0) arc(0, 0, mag * 2, mag * 2, -dRot, 0);
       else arc(0, 0, mag * 2, mag * 2, 0, -dRot);
@@ -54,7 +57,7 @@ public class Limb {
     }
     noFill();
     stroke(h ? lerpColor(col, #ffffff, 0.7) : col);
-    strokeWeight(2);
+    strokeWeight(6);
     line(0, 0, mag, 0);
     if (children.size() > 0) {
       for (Limb c : children) c.draw();
