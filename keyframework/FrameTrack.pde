@@ -5,7 +5,7 @@ public class FrameTrack extends PApplet {
     size(800, 600);
   }
   public void draw() {
-    background(255);
+    background(0);
     if (mousePressed) {
       scrubber.loc = round(map(mouseX, 0, width, 0, songLen) / beatLen) * beatLen;
       if (scrubber.loc < 0) scrubber.loc = 0;
@@ -14,13 +14,22 @@ public class FrameTrack extends PApplet {
     int i = 0;
     for (Limb l : frameTracks.keySet()) {
       rectMode(LEFT);
-      stroke(0);
-      fill(255);
-      rect(0, i * tHeight, width, (i + 1) * tHeight);
+      stroke(30);
+      fill(50);
+      strokeWeight(1.5);
+      rect(-2, i * tHeight, width + 5, (i + 1) * tHeight);
       frameTracks.get(l).draw(i++);
       if (focusedLimb == null) frameTracks.get(l).animate(l, scrubber.loc);
     }
     scrubber.draw();
+    float y = round((mouseY +  tHeight / 2) / tHeight) * tHeight;
+    boolean h = mouseX > width - 15 - tHeight / 2;
+    fill(h ? #FF0026 : 50);
+    stroke(h ? 50 : #FF0026);
+    strokeWeight(1.5);
+    ellipse(width - 15, y - tHeight / 2, tHeight * 0.5, tHeight * 0.5);
+    line(width - 15 - 3, y - tHeight / 2, width - 15 + 3, y - tHeight / 2);
+    line(width - 15, y - 3 - tHeight / 2, width - 15, y - tHeight / 2 + 3);
   }
   void keyPressed() {
     if (key != ' ') return;
@@ -28,5 +37,10 @@ public class FrameTrack extends PApplet {
       println(l.name + ": " + frameTracks.get(l));
     }
       println();
+  }
+  void mousePressed() {
+    if (mouseX > width - 15 - tHeight / 2) {
+      //frameTracks.get().add(scrubber.loc, 0);
+    }
   }
 }

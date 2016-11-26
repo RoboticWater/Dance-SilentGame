@@ -5,6 +5,7 @@ public class Limb {
   color col;
   PVector origin;
   Limb parent;
+  JiggleLimb jLimb;
   ArrayList<Limb> children;
   String name;
   public Limb(float _x, float _y, float _mag, float _angle, color _col, String _name) {
@@ -34,6 +35,7 @@ public class Limb {
       colorMode(HSB);
       stroke(color((map(dRot, 0, 5*TWO_PI, 0, 255) + 90) % 255, 230, 230));
       colorMode(RGB);
+      noFill();
       if (dRot >= 0) arc(0, 0, mag * 2, mag * 2, -dRot, 0);
       else arc(0, 0, mag * 2, mag * 2, 0, -dRot);
       if (mousePressed) {
@@ -62,12 +64,30 @@ public class Limb {
     if (children.size() > 0) {
       for (Limb c : children) c.draw();
     }
+    if (jLimb != null) 
+      jLimb.update(screenX(0, 0, 0), screenY(0, 0, 0), screenX(mag, 0, 0), screenY(mag, 0, 0), realAngle());
     popMatrix();
   }
   private void move() {
   }
   private boolean hovered() {
     return dist(mouseX, mouseY, screenX(mag, 0, 0), screenY(mag, 0, 0)) < 10;
+  }
+  public PVector[] realPosition() {
+    PVector[] out = new PVector[2];
+    if (parent == null) {
+      out[0] = origin.get();
+    } else {
+      out[0] = parent.realPosition()[1].get();
+    }
+    out[1] = new PVector(mag, 0);
+    out[1].rotate(realAngle());
+    out[1].add(out[0]);
+    return out;
+  }
+  public float realAngle() {
+    if (parent == null) return angle;
+    return angle + parent.realAngle();
   }
 }
 
