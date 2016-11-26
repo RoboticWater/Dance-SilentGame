@@ -5,13 +5,13 @@ public class Armature {
     limbs.add(new Limb(width / 2, height / 2 + 60, 60, -HALF_PI, #8E57C9, "Chest Lower"));
     jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), null, 30, 40, 5));
     limbs.add(new Limb(width / 2, height / 2 + 60, 10, HALF_PI, #000000, "Tail"));
-    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), 30, 30, 2));
+    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), null, 30, 30, 2));
     limbs.add(new Limb(70, 0, #4241BC, "Chest Upper", limbs.get(0)));
-    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), 40, 50, 5));
+    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), jLimbs.get(jLimbs.size() - 1), 40, 50, 5));
     limbs.add(new Limb(30, 0, #7EE838, "Neck", limbs.get(2)));
-    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), 30, 30, 5));
+    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), jLimbs.get(jLimbs.size() - 1), 30, 30, 5));
     limbs.add(new Limb(30, 0, #E83858, "Head", limbs.get(3)));
-    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), 30, 30, 5));
+    jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), jLimbs.get(jLimbs.size() - 1), 30, 30, 5));
     limbs.add(new Limb(50, HALF_PI, #C7E838, "Right Shoulder", limbs.get(2)));
     //limbs.add(new Limb(300, 300, 50, 0, #000000));
     limbs.add(new Limb(70, HALF_PI, #E8C238, "Right Upper Arm", limbs.get(5)));
