@@ -70,6 +70,7 @@ public class Limb {
         //println(pdN);
         //println(dRot);
         //println();
+        move();
       } else {
         focusedLimb = null;
       }
@@ -81,12 +82,15 @@ public class Limb {
     //line(0, 0, mag, 0);
     if (children.size() > 0) {
       for (Limb c : children) c.draw();
-    }
-    if (jLimb != null) 
-      jLimb.update(screenX(0, 0, 0), screenY(0, 0, 0), screenX(mag, 0, 0), screenY(mag, 0, 0), realAngle());
+    } 
     popMatrix();
   }
   private void move() {
+    if (jLimb == null) return;
+    jLimb.update(screenX(0, 0, 0), screenY(0, 0, 0), screenX(mag, 0, 0), screenY(mag, 0, 0), realAngle());
+    if (children.size() > 0) {
+      for (Limb l : children) l.move();
+    }
   }
   private boolean hovered() {
     return dist(mouseX, mouseY, screenX(mag, 0, 0), screenY(mag, 0, 0)) < 10;

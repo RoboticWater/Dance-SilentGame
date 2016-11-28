@@ -25,30 +25,31 @@ public class JiggleLimb {
     angle = parent.realAngle();
     //println(angle);
     particles = new Particle[_num][3];
+    fixedParticles = new Particle[_num][2];
     if (prev == null) meshNoPrev(_num);
     else meshPrev(_num);
   }
   public void draw() {
-    for (int x = 0; x < particles.length; x++) {
-      for (int y = 0; y < particles[0].length; y++) {
-        point(particles[x][y].position().x(), particles[x][y].position().y());
-      }
+    //for (int x = 0; x < particles.length; x++) {
+    //  for (int y = 0; y < particles[0].length; y++) {
+    //    point(particles[x][y].position().x(), particles[x][y].position().y());
+    //  }
+    //}
+    fill(0);
+    stroke(0);
+    beginShape();
+    curveVertex(particles[0][0].position().x(), particles[0][0].position().y());
+    for (int i = 0; i < particles.length - 1; i++) {
+      curveVertex(particles[i][0].position().x(), particles[i][0].position().y());
     }
-    //fill(0);
-    //stroke(0);
-    //beginShape();
-    //curveVertex(particles[0][0].position().x(), particles[0][0].position().y());
-    //for (int i = 0; i < particles.length - 1; i++) {
-    //  curveVertex(particles[i][0].position().x(), particles[i][0].position().y());
-    //}
-    //curveVertex(particles[particles.length - 1][0].position().x(), particles[particles.length - 1][0].position().y());
-    //curveVertex(particles[particles.length - 1][0].position().x(), particles[particles.length - 1][0].position().y());
-    //vertex(particles[particles.length - 1][2].position().x(), particles[particles.length - 1][2].position().y());
-    //for (int i = particles.length - 1; i >= 0; i--) {
-    //  curveVertex(particles[i][2].position().x(), particles[i][2].position().y());
-    //}
-    //curveVertex(particles[0][2].position().x(), particles[0][2].position().y());
-    //endShape();
+    curveVertex(particles[particles.length - 1][0].position().x(), particles[particles.length - 1][0].position().y());
+    curveVertex(particles[particles.length - 1][0].position().x(), particles[particles.length - 1][0].position().y());
+    vertex(particles[particles.length - 1][2].position().x(), particles[particles.length - 1][2].position().y());
+    for (int i = particles.length - 1; i >= 0; i--) {
+      curveVertex(particles[i][2].position().x(), particles[i][2].position().y());
+    }
+    curveVertex(particles[0][2].position().x(), particles[0][2].position().y());
+    endShape();
     //arc(org.position().x(), org.position().y(), oSize, oSize, angle + HALF_PI, angle + HALF_PI + PI);
     //arc(ext.position().x(), ext.position().y(), eSize, eSize, angle + HALF_PI + PI, angle + HALF_PI + TWO_PI);
   }
@@ -68,12 +69,20 @@ public class JiggleLimb {
       bOrg.position().set(bots[0].x, bots[0].y, 0);
       bOrg.velocity().clear();
     }
-    //if (tip) {
+    if (tip) {
       tExt.position().set(tops[1].x, tops[1].y, 0);
       tExt.velocity().clear();
       bExt.position().set(bots[1].x, bots[1].y, 0);
       bExt.velocity().clear();
-    //}
+    }
+    for (int x = 0; x < particles.length; x++) {
+      float tvx = map(x, 0, particles.length - 1, tops[0].x, tops[1].x);
+      float tvy = map(x, 0, particles.length - 1, tops[0].y, tops[1].y);
+      float bvx = map(x, 0, particles.length - 1, bots[0].x, bots[1].x);
+      float bvy = map(x, 0, particles.length - 1, bots[0].y, bots[1].y);
+      fixedParticles[x][0].position().set(tvx, tvy, 0);
+      fixedParticles[x][1].position().set(bvx, bvy, 0);
+    }
   }
   private void meshNoPrev(int _num) {
     PVector[] p = parent.realPosition();
@@ -89,9 +98,13 @@ public class JiggleLimb {
       particles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
       particles[x][1] = physics.makeParticle(0.2, vx, vy, 0);
       particles[x][2] = physics.makeParticle(0.2, bvx, bvy, 0);
-      //fixedParticles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
-      //fixedParticles[x][1] = physics.makeParticle(0.2, vx, vy, 0);
-      //fixedParticles[x][2] = physics.makeParticle(0.2, bvx, bvy, 0);
+      
+      fixedParticles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
+      fixedParticles[x][0].makeFixed();
+      fixedParticles[x][1] = physics.makeParticle(0.2, bvx, bvy, 0);
+      fixedParticles[x][1].makeFixed();
+      physics.makeSpring(particles[x][0], fixedParticles[x][0], SPRING_STRENGTH, SPRING_DAMPING, 0);
+      physics.makeSpring(particles[x][2], fixedParticles[x][1], SPRING_STRENGTH, SPRING_DAMPING, 0);
       if (x == 0 || x == _num - 1) {
         particles[x][0].makeFixed();
         particles[x][1].makeFixed();
@@ -120,6 +133,8 @@ public class JiggleLimb {
     particles[0][0] = prev.particles[prev.particles.length - 1][0];
     particles[0][1] = prev.particles[prev.particles.length - 1][1];
     particles[0][2] = prev.particles[prev.particles.length - 1][2];
+    fixedParticles[0][0] = prev.fixedParticles[prev.fixedParticles.length - 1][0];
+    fixedParticles[0][1] = prev.fixedParticles[prev.fixedParticles.length - 1][1];
     for (int x = 1; x < _num; x++) {
       float vx = map(x, 0, _num - 1, p[0].x, p[1].x);
       float vy = map(x, 0, _num - 1, p[0].y, p[1].y);
@@ -130,6 +145,13 @@ public class JiggleLimb {
       particles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
       particles[x][1] = physics.makeParticle(0.2, vx, vy, 0);
       particles[x][2] = physics.makeParticle(0.2, bvx, bvy, 0);
+      
+      fixedParticles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
+      fixedParticles[x][0].makeFixed();
+      fixedParticles[x][1] = physics.makeParticle(0.2, bvx, bvy, 0);
+      fixedParticles[x][1].makeFixed();
+      physics.makeSpring(particles[x][0], fixedParticles[x][0], SPRING_STRENGTH / 4, SPRING_DAMPING, 0);
+      physics.makeSpring(particles[x][2], fixedParticles[x][1], SPRING_STRENGTH / 4, SPRING_DAMPING, 0);
       if (x == _num - 1) {
         particles[x][0].makeFixed();
         particles[x][1].makeFixed();
@@ -152,13 +174,13 @@ public class JiggleLimb {
     //bExt = particles[_num - 1][2];
     
     tOrg = particles[0][0];
-    //tOrg.makeFree();
+    tOrg.makeFree();
     tExt = particles[_num - 1][0];
     org = particles[0][1];
     org.makeFixed();
     ext = particles[_num - 1][1];
     bOrg = particles[0][2];
-    //bOrg.makeFree();
+    bOrg.makeFree();
     bExt = particles[_num - 1][2];
   }
   private PVector[] offVects(float a, float ox, float oy, float ex, float ey, float off) {
