@@ -31,6 +31,8 @@ int songLen = 30000;
 int beatLen = 100;
 int exerptLen = 5000;
 int exerptOff = 0;
+
+int test = 0;
 void setup() {
   size(900, 700, P3D);
   bgimg = loadImage("dance_title_screen.png");
@@ -44,6 +46,7 @@ void setup() {
   makeEvents();
 }
 void draw() {
+  test = 0;
   background(255);
   frameTrack();
   //stateMachine();

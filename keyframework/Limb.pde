@@ -8,6 +8,7 @@ public class Limb {
   JiggleLimb jLimb;
   ArrayList<Limb> children;
   String name;
+  boolean update = false;
   public Limb(float _x, float _y, float _mag, float _angle, color _col, String _name) {
     mag    = _mag;
     angle  = _angle;
@@ -45,19 +46,19 @@ public class Limb {
         }
         PVector n = new PVector(mouseX - screenX(0, 0, 0), mouseY - screenY(0, 0, 0));
         PVector c = new PVector(screenX(mag, 0, 0) - screenX(0, 0, 0), screenY(mag, 0, 0) - screenY(0, 0, 0));
-        println("n Head: " + n.heading());
-        println("c Head: " + c.heading());
-        println("    pN: " + pN);
-        println("   pdN: " + pdN);
-        println(" n - c: " + (n.heading() - c.heading()));
-        println(" angle: " + angle);
-        println();
+        //println("n Head: " + n.heading());
+        //println("c Head: " + c.heading());
+        //println("    pN: " + pN);
+        //println("   pdN: " + pdN);
+        //println(" n - c: " + (n.heading() - c.heading()));
+        //println(" angle: " + angle);
+        //println();
         if (sign(n.heading()) + sign(pN) == 0 && sign(n.heading() - c.heading()) != sign(pdN) && abs(n.heading()) > 0.5) {
-          println(sign(n.heading()));
-          println(sign(pN));
-          println(sign(n.heading() - c.heading()));
-          println(sign(pdN));
-          println();
+          //println(sign(n.heading()));
+          //println(sign(pN));
+          //println(sign(n.heading() - c.heading()));
+          //println(sign(pdN));
+          //println();
           dRot += -TWO_PI * sign(n.heading() - c.heading());
           //println(dRot + n.heading() - c.heading());
         }
@@ -83,14 +84,15 @@ public class Limb {
     if (children.size() > 0) {
       for (Limb c : children) c.draw();
     } 
+    if (jLimb != null && update) {
+      jLimb.update(screenX(0, 0, 0), screenY(0, 0, 0), screenX(mag, 0, 0), screenY(mag, 0, 0), realAngle());
+      update = false;
+    }
     popMatrix();
   }
   private void move() {
-    if (jLimb == null) return;
-    jLimb.update(screenX(0, 0, 0), screenY(0, 0, 0), screenX(mag, 0, 0), screenY(mag, 0, 0), realAngle());
-    if (children.size() > 0) {
-      for (Limb l : children) l.move();
-    }
+    update = true;
+    for (Limb l : children) l.move();
   }
   private boolean hovered() {
     return dist(mouseX, mouseY, screenX(mag, 0, 0), screenY(mag, 0, 0)) < 10;
