@@ -14,28 +14,27 @@ public class KeyFrame {
   }
   public void draw(int track) {
     boolean h = (hover(track) || focusedFrames.contains(this)) && prev != null;
-    if (h && frameTrack.mousePressed) {
+    if (h && mousePressed) {
       if (!focusedFrames.contains(this)) focusedFrames.add(this);
       time = scrubber.loc;
     } else if (h) {
       focusedFrames.remove(this);
     }
     if (prev != null) {
-      frameTrack.pushMatrix();
-      frameTrack.rectMode(CENTER);
-      frameTrack.translate(map(time, 0, songLen, 0, frameTrack.width), (track + 0.5) * frameTrack.tHeight);
-      frameTrack.rotate(PI / 4);
-      frameTrack.noFill();
-      frameTrack.strokeWeight(1.5);
-      frameTrack.stroke(h ? #FC5468 : #00aaff);
-      frameTrack.rect(0, 0, frameTrack.tHeight * 0.5, frameTrack.tHeight * 0.5);
-      frameTrack.popMatrix();
+      pushMatrix();
+      rectMode(CENTER);
+      translate(map(time, 0, songLen, width / 2, width), (track + 0.5) * trackHeight);
+      rotate(PI / 4);
+      noFill();
+      strokeWeight(1.5);
+      stroke(h ? #FC5468 : #00aaff);
+      rect(0, 0, trackHeight * 0.5, trackHeight * 0.5);
+      popMatrix();
     }
     if (next != null) next.draw(track);
   }
   public boolean hover(int track) {
-    return dist(frameTrack.mouseX, frameTrack.mouseY, 
-      map(time, 0, songLen, 0, frameTrack.width), (track + 0.5) * frameTrack.tHeight) < frameTrack.tHeight * 0.4;
+    return dist(mouseX, mouseY, map(time, 0, songLen, width / 2, width), (track + 0.5) * trackHeight) < trackHeight * 0.4;
   }
   public void animate(Limb limb, int sTime) {
     float b = endRotation() + rotate;     //Initial angle

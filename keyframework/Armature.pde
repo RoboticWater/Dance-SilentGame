@@ -2,9 +2,9 @@ public class Armature {
   ArrayList<Limb> limbs;
   public Armature() {
     limbs = new ArrayList();
-    limbs.add(new Limb(width / 2, height / 2 + 60, 60, -HALF_PI, #8E57C9, "Chest Lower"));
+    limbs.add(new Limb(width / 4, height / 2 + 60, 60, -HALF_PI, #8E57C9, "Chest Lower"));
     jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), null, 30, 40, 5));
-    limbs.add(new Limb(width / 2, height / 2 + 60, 10, HALF_PI, #000000, "Tail"));
+    limbs.add(new Limb(width / 4, height / 2 + 60, 10, HALF_PI, #000000, "Tail"));
     jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), null, 30, 30, 2));
     limbs.add(new Limb(70, 0, #4241BC, "Chest Upper", limbs.get(0)));
     jLimbs.add(new JiggleLimb(limbs.get(limbs.size() - 1), jLimbs.get(jLimbs.size() - 1), 40, 50, 5));
@@ -31,9 +31,7 @@ public class Armature {
     limbs.add(new Limb(20, -PI/6, #E8CE38, "Left Foot", limbs.get(19)));
   }
   public void draw() {
-    //limbs.get().draw();
     limbs.get(0).draw();
     limbs.get(1).draw();
-    //limbs.get().draw();
   }
 }

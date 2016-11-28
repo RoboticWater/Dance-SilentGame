@@ -38,21 +38,38 @@ public class Limb {
       noFill();
       if (dRot >= 0) arc(0, 0, mag * 2, mag * 2, -dRot, 0);
       else arc(0, 0, mag * 2, mag * 2, 0, -dRot);
-      if (mousePressed) {
+      if (mousePressed && !scrubFocus) {
         if (focusedLimb == null) {
           sAngle = angle;
           focusedLimb = this;
         }
         PVector n = new PVector(mouseX - screenX(0, 0, 0), mouseY - screenY(0, 0, 0));
         PVector c = new PVector(screenX(mag, 0, 0) - screenX(0, 0, 0), screenY(mag, 0, 0) - screenY(0, 0, 0));
-        if (sign(n.heading()) != sign(pN) && sign(n.heading() - c.heading()) != sign(pdN) && abs(n.heading()) > 0.01) {
+        println("n Head: " + n.heading());
+        println("c Head: " + c.heading());
+        println("    pN: " + pN);
+        println("   pdN: " + pdN);
+        println(" n - c: " + (n.heading() - c.heading()));
+        println(" angle: " + angle);
+        println();
+        if (sign(n.heading()) + sign(pN) == 0 && sign(n.heading() - c.heading()) != sign(pdN) && abs(n.heading()) > 0.5) {
+          println(sign(n.heading()));
+          println(sign(pN));
+          println(sign(n.heading() - c.heading()));
+          println(sign(pdN));
+          println();
           dRot += -TWO_PI * sign(n.heading() - c.heading());
           //println(dRot + n.heading() - c.heading());
         }
         angle += n.heading() - c.heading();
         pN = n.heading();
-        pdN = n.heading() - c.heading();
+        pdN = abs(n.heading() - c.heading()) < 0.001 ? 0 : n.heading() - c.heading();
         dRot += pdN;
+        //println(angle);
+        //println(pN);
+        //println(pdN);
+        //println(dRot);
+        //println();
       } else {
         focusedLimb = null;
       }
@@ -60,7 +77,8 @@ public class Limb {
     noFill();
     stroke(h ? lerpColor(col, #ffffff, 0.7) : col);
     strokeWeight(6);
-    line(0, 0, mag, 0);
+    ellipse(mag, 0, 3, 3);
+    //line(0, 0, mag, 0);
     if (children.size() > 0) {
       for (Limb c : children) c.draw();
     }
@@ -92,6 +110,7 @@ public class Limb {
 }
 
 int sign(float a) {
-  if ((int)Math.signum(a) > -1) return 1;
+  if ((int)Math.signum(a) > 0) return 1;
+  else if ((int)Math.signum(a) == 0) return 0;
   else return -1;
 }
