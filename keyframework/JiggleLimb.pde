@@ -3,13 +3,14 @@ import traer.physics.*;
 ParticleSystem physics;
 float SPRING_STRENGTH = 0.2;
 float SPRING_DAMPING = 0.1;
-float tension = 1;//0.85
+float tension = 0.85;
 public class JiggleLimb {
   Limb parent;
   Particle tOrg, tExt;
   Particle org, ext;
   Particle bOrg, bExt;
   Particle[][] particles;
+  Particle[][] fixedParticles;
   JiggleLimb next, prev;
   float angle;
   float oSize;
@@ -76,56 +77,33 @@ public class JiggleLimb {
   }
   private void meshNoPrev(int _num) {
     PVector[] p = parent.realPosition();
-    PVector start = new PVector(oSize / 2, 0);
-    start.rotate(angle + HALF_PI);
-    start.add(p[0]);
-    PVector end = new PVector(eSize / 2, 0);
-    end.rotate(angle + HALF_PI);
-    end.add(p[1]);
-    //Middle
+    PVector[] tops = offVects(angle, p[0].x, p[0].y, p[1].x, p[1].y, 0);
+    PVector[] bots = offVects(angle, p[0].x, p[0].y, p[1].x, p[1].y, PI);
     for (int x = 0; x < _num; x++) {
       float vx = map(x, 0, _num - 1, p[0].x, p[1].x);
       float vy = map(x, 0, _num - 1, p[0].y, p[1].y);
+      float tvx = map(x, 0, _num - 1, tops[0].x, tops[1].x);
+      float tvy = map(x, 0, _num - 1, tops[0].y, tops[1].y);
+      float bvx = map(x, 0, _num - 1, bots[0].x, bots[1].x);
+      float bvy = map(x, 0, _num - 1, bots[0].y, bots[1].y);
+      particles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
       particles[x][1] = physics.makeParticle(0.2, vx, vy, 0);
-      if (x == 0 || x == _num - 1) particles[x][1].makeFixed();
-      if (x > 0) {
-        float d = particles[x - 1][1].position().distanceTo(particles[x][1].position());
-        physics.makeSpring(particles[x - 1][1], particles[x][1], SPRING_STRENGTH, SPRING_DAMPING, d);
+      particles[x][2] = physics.makeParticle(0.2, bvx, bvy, 0);
+      //fixedParticles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
+      //fixedParticles[x][1] = physics.makeParticle(0.2, vx, vy, 0);
+      //fixedParticles[x][2] = physics.makeParticle(0.2, bvx, bvy, 0);
+      if (x == 0 || x == _num - 1) {
+        particles[x][0].makeFixed();
+        particles[x][1].makeFixed();
+        particles[x][2].makeFixed();
       }
-    }
-    //Top
-    for (int x = 0; x < _num; x++) {
-      float vx = map(x, 0, _num - 1, start.x, end.x);
-      float vy = map(x, 0, _num - 1, start.y, end.y);
-      particles[x][0] = physics.makeParticle(0.2, vx, vy, 0);
-      if (x == 0 || x == _num - 1) particles[x][0].makeFixed();
       if (x > 0) {
         float d = particles[x - 1][0].position().distanceTo(particles[x][0].position());
         physics.makeSpring(particles[x - 1][0], particles[x][0], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
-      }
-    }
-    start.set(oSize / 2, 0);
-    start.rotate(angle + PI + HALF_PI);
-    start.add(p[0]);
-    end.set(eSize / 2, 0);
-    end.rotate(angle + PI + HALF_PI);
-    end.add(p[1]);
-    //Bottom
-    for (int x = 0; x < _num; x++) {
-      float vx = map(x, 0, _num - 1, start.x, end.x);
-      float vy = map(x, 0, _num - 1, start.y, end.y);
-      particles[x][2] = physics.makeParticle(0.2, vx, vy, 0);
-      if (x == 0 || x == _num - 1) particles[x][2].makeFixed();
-      if (x > 0) {
-        float d = particles[x - 1][2].position().distanceTo(particles[x][2].position());
+        d = particles[x - 1][1].position().distanceTo(particles[x][1].position());
+        physics.makeSpring(particles[x - 1][1], particles[x][1], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
+        d = particles[x - 1][2].position().distanceTo(particles[x][2].position());
         physics.makeSpring(particles[x - 1][2], particles[x][2], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
-      }
-    }
-
-    for (int y = 0; y < 3; y++) {
-      for (int x = 1; x < _num; x++) {
-        float d = particles[x - 1][y].position().distanceTo(particles[x][y].position());
-        physics.makeSpring(particles[x - 1][y], particles[x][y], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
       }
     }
     tOrg = particles[0][0];
@@ -137,57 +115,42 @@ public class JiggleLimb {
   }
   private void meshPrev(int _num) {
     PVector[] p = parent.realPosition();
-    PVector start = new PVector(oSize / 2, 0);
-    start.rotate(angle + HALF_PI);
-    start.add(p[0]);
-    PVector end = new PVector(eSize / 2, 0);
-    end.rotate(angle + HALF_PI);
-    end.add(p[1]);
+    PVector[] tops = offVects(angle, p[0].x, p[0].y, p[1].x, p[1].y, 0);
+    PVector[] bots = offVects(angle, p[0].x, p[0].y, p[1].x, p[1].y, PI);
     particles[0][0] = prev.particles[prev.particles.length - 1][0];
     particles[0][1] = prev.particles[prev.particles.length - 1][1];
-    particles[0][1].makeFixed();
     particles[0][2] = prev.particles[prev.particles.length - 1][2];
-    //Middle
     for (int x = 1; x < _num; x++) {
       float vx = map(x, 0, _num - 1, p[0].x, p[1].x);
       float vy = map(x, 0, _num - 1, p[0].y, p[1].y);
+      float tvx = map(x, 0, _num - 1, tops[0].x, tops[1].x);
+      float tvy = map(x, 0, _num - 1, tops[0].y, tops[1].y);
+      float bvx = map(x, 0, _num - 1, bots[0].x, bots[1].x);
+      float bvy = map(x, 0, _num - 1, bots[0].y, bots[1].y);
+      particles[x][0] = physics.makeParticle(0.2, tvx, tvy, 0);
       particles[x][1] = physics.makeParticle(0.2, vx, vy, 0);
-      if (x == _num - 1) particles[x][1].makeFixed();
-      float d = particles[x - 1][1].position().distanceTo(particles[x][1].position());
-      physics.makeSpring(particles[x - 1][1], particles[x][1], SPRING_STRENGTH, SPRING_DAMPING, d);
-    }
-    //Top
-    for (int x = 1; x < _num; x++) {
-      float vx = map(x, 0, _num - 1, start.x, end.x);
-      float vy = map(x, 0, _num - 1, start.y, end.y);
-      particles[x][0] = physics.makeParticle(0.2, vx, vy, 0);
-      if (x == _num - 1) particles[x][0].makeFixed();
-      float d = particles[x - 1][0].position().distanceTo(particles[x][0].position());
-      physics.makeSpring(particles[x - 1][0], particles[x][0], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
-    }
-    start.set(oSize / 2, 0);
-    start.rotate(angle + PI + HALF_PI);
-    start.add(p[0]);
-    end.set(eSize / 2, 0);
-    end.rotate(angle + PI + HALF_PI);
-    end.add(p[1]);
-    //Bottom
-    for (int x = 1; x < _num; x++) {
-      float vx = map(x, 0, _num - 1, start.x, end.x);
-      float vy = map(x, 0, _num - 1, start.y, end.y);
-      particles[x][2] = physics.makeParticle(0.2, vx, vy, 0);
-      if (x == _num - 1) particles[x][2].makeFixed();
-      float d = particles[x - 1][2].position().distanceTo(particles[x][2].position());
-      physics.makeSpring(particles[x - 1][2], particles[x][2], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
-    }
-
-    for (int y = 0; y < 3; y++) {
-      for (int x = 1; x < _num; x++) {
-        float d = particles[x - 1][y].position().distanceTo(particles[x][y].position());
-        physics.makeSpring(particles[x - 1][y], particles[x][y], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
+      particles[x][2] = physics.makeParticle(0.2, bvx, bvy, 0);
+      if (x == _num - 1) {
+        particles[x][0].makeFixed();
+        particles[x][1].makeFixed();
+        particles[x][2].makeFixed();
+      }
+      if (x > 0) {
+        float d = particles[x - 1][0].position().distanceTo(particles[x][0].position());
+        physics.makeSpring(particles[x - 1][0], particles[x][0], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
+        d = particles[x - 1][1].position().distanceTo(particles[x][1].position());
+        physics.makeSpring(particles[x - 1][1], particles[x][1], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
+        d = particles[x - 1][2].position().distanceTo(particles[x][2].position());
+        physics.makeSpring(particles[x - 1][2], particles[x][2], SPRING_STRENGTH, SPRING_DAMPING, d * tension);
       }
     }
-
+    //tOrg = particles[0][0];
+    //tExt = particles[_num - 1][0];
+    //org = particles[0][1];
+    //ext = particles[_num - 1][1];
+    //bOrg = particles[0][2];
+    //bExt = particles[_num - 1][2];
+    
     tOrg = particles[0][0];
     //tOrg.makeFree();
     tExt = particles[_num - 1][0];
