@@ -2,12 +2,12 @@ public void frameTrack() {
   if (mousePressed && ((mouseX >= width / 2 && mouseX <= width - trackHeight * 0.5 - 15) || scrubFocus) && focusedLimb == null) {
     scrubFocus = true;
     doAnim = false;
-    scrubber.loc = round(map(mouseX - width / 2, 0, ftWidth, 0, songLen) / beatLen) * beatLen;
+    scrubber.loc = round(map(mouseX - width / 2, 0, ftWidth, 0, exerptLen) / beatLen) * beatLen;
     if (scrubber.loc < 0) scrubber.loc = 0;
-    else if (scrubber.loc > songLen + 1) scrubber.loc = songLen;
+    else if (scrubber.loc > exerptLen + 1) scrubber.loc = exerptLen;
   }
   int i = 0;
-  for (Limb l : frameTracks.keySet()) {
+  for (Limb l : dancer.limbs) {
     rectMode(LEFT);
     stroke(30);
     fill(50);

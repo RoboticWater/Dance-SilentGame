@@ -1,10 +1,16 @@
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
+
 //Screen
 PFont font;
 int state;
 color bgcol = #EF3C29;
 float bgsize;
 PImage bgimg;
-boolean inMenu = true;
 //Current Frame Data
 float dRot;
 float pN;
@@ -85,9 +91,13 @@ void mouseReleased() {
   down = false;
 }
 void mousePressed() {
-  //if (mouseX > width - 15 - tHeight / 2) {
-  //  //frameTracks.get().add(scrubber.loc, 0);
-  //}
+  if (mouseButton == RIGHT) {
+    Limb l = dancer.limbs.get(round((mouseY +  trackHeight / 2) / trackHeight) - 1);
+    frameTracks.get(l).remove(round((mouseY +  trackHeight / 2) / trackHeight) - 1);
+  } else if (mouseX > width - 15 - trackHeight / 2) {
+    Limb l = dancer.limbs.get(round((mouseY +  trackHeight / 2) / trackHeight) - 1);
+    frameTracks.get(l).add(scrubber.loc, 0);
+  }
 }
 public void setDefaults() {
   //Screen

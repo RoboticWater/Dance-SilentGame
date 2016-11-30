@@ -3,6 +3,7 @@ public class KeyFrame {
   float  rotate;
   KeyFrame next;
   KeyFrame prev;
+  color     col;
   public KeyFrame(int _time, float _rotate) {
     time = _time;
     rotate = _rotate;
@@ -14,7 +15,7 @@ public class KeyFrame {
   }
   public void draw(int track) {
     boolean h = (hover(track) || focusedFrames.contains(this)) && prev != null;
-    if (h && mousePressed) {
+    if (h && mousePressed && !scrubFocus) {
       if (!focusedFrames.contains(this)) focusedFrames.add(this);
       time = scrubber.loc;
     } else if (h) {
@@ -23,22 +24,23 @@ public class KeyFrame {
     if (prev != null) {
       pushMatrix();
       rectMode(CENTER);
-      translate(map(time, 0, songLen, width / 2, width), (track + 0.5) * trackHeight);
+      translate(map(time, 0, exerptLen, width / 2, width), (track + 0.5) * trackHeight);
       rotate(PI / 4);
       noFill();
       strokeWeight(1.5);
       stroke(h ? #FC5468 : #00aaff);
-      rect(0, 0, trackHeight * 0.5, trackHeight * 0.5);
+      rect(0, 0, trackHeight * 0.3, trackHeight * 0.3);
       popMatrix();
     }
     if (next != null) next.draw(track);
   }
   public boolean hover(int track) {
-    return dist(mouseX, mouseY, map(time, 0, songLen, width / 2, width), (track + 0.5) * trackHeight) < trackHeight * 0.4;
+    return dist(mouseX, mouseY, map(time, 0, exerptLen, width / 2, width), (track + 0.5) * trackHeight) < trackHeight * 0.4;
   }
   public void animate(Limb limb, int sTime) {
     float b = endRotation() + rotate;     //Initial angle
     if (sTime < time) {
+      limb.move();
       float t = time - sTime;    //Current time
       float d = time - (prev == null ? 0 : prev.time);//Duration of animation
       float c = -rotate;          //Total change in angle
@@ -51,9 +53,14 @@ public class KeyFrame {
       t--;
       limb.angle = -c/2 * (t*(t-2) - 1) + b;
     } else if (sTime == time) {
+      limb.move();
       limb.angle = b;
     } else {
       if (next != null) next.animate(limb, sTime);
+      else {
+        limb.move();
+        limb.angle = b;
+      }
     }
     //if (next == null) {
     //  limb.angle = b;
@@ -76,6 +83,16 @@ public class KeyFrame {
   public float endRotation() {
     if (prev == null) return 0;
     return prev.endRotation() + prev.rotate;
+  }
+  public void remove(int t) {
+    if (hover(t)) {
+      if (prev == null) return;
+      prev.next = next;
+      if (next != null) next.rotate += rotate;
+      prev.animate(dancer.limbs.get(t), scrubber.loc);
+    } else if (next != null) {
+      next.remove(t);
+    }
   }
   public void add(int _time, float _rotate) {
     if (_time > time) {

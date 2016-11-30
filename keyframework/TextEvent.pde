@@ -62,7 +62,6 @@ public void stateMachine() {
     case 2:
       break;
     case 3:
-      inMenu = false;
       break;
   }
   boolean curs = false;
