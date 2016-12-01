@@ -40,9 +40,9 @@ int exerptLen = 5000;
 int exerptOff = 0;
 //Turn Data
 boolean side = true;
-int time = 2000;
+int globalTime = 2000;
 int turnStart = 0;
-int MAX_TIME = 10000;
+int MAX_TIME = 120000;
 void setup() {
   size(900, 700, P3D);
   font = loadFont("LeagueGothic-Regular-48.vlw");
@@ -129,7 +129,8 @@ public void setDefaults() {
   ftWidth = width / 2;
   ftX = width / 2;
   trackHeight = 1.0 * height / dancer.limbs.size();
-  for (Limb n : dancer.limbs) {
-    frameTracks.put(n, new KeyFrame(0, n.angle));
+  int i = 0;
+  for (Limb l : dancer.limbs) {
+    frameTracks.put(l, new KeyFrame(0, l.angle, i++, l.col));
   }
 }

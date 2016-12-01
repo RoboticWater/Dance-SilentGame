@@ -1,20 +1,25 @@
 public class KeyFrame {
   int      time;
+  int     track;
   float  rotate;
   KeyFrame next;
   KeyFrame prev;
   color     col;
-  public KeyFrame(int _time, float _rotate) {
+  public KeyFrame(int _time, float _rotate, int _track, color _col) {
     time = _time;
     rotate = _rotate;
+    track = _track;
+    col = _col;
   }
-  public KeyFrame(int _time, float _rotate, KeyFrame _prev) {
+  public KeyFrame(int _time, float _rotate, KeyFrame _prev, int _track, color _col) {
     time = _time;
     rotate = _rotate;
     prev = _prev;
+    track = _track;
+    col = _col;
   }
-  public void draw(int track) {
-    boolean h = (hover(track) || focusedFrames.contains(this)) && prev != null;
+  public void draw() {
+    boolean h = (hover() || focusedFrames.contains(this)) && prev != null;
     if (!inMenu && h && mousePressed && !scrubFocus) {
       if (!focusedFrames.contains(this)) focusedFrames.add(this);
       time = scrubber.loc;
@@ -28,14 +33,17 @@ public class KeyFrame {
       rotate(PI / 4);
       noFill();
       strokeWeight(1.5);
-      stroke(h ? #FC5468 : #00aaff);
+      stroke(h ? 255 : col);
       rect(0, 0, trackHeight * 0.3, trackHeight * 0.3);
       popMatrix();
     }
-    if (next != null) next.draw(track);
+    if (next != null) next.draw();
   }
-  public boolean hover(int track) {
-    return dist(mouseX, mouseY, map(time, 0, exerptLen, width / 2, width), (track + 0.5) * trackHeight) < trackHeight * 0.4;
+  public boolean hover() {
+    return prev != null && dist(mouseX, mouseY, map(time, 0, exerptLen, width / 2, width), (track + 0.5) * trackHeight) < trackHeight * 0.4;
+  }
+  public boolean trackHover() {
+    return hover() ? true : (next == null ? false : next.trackHover());
   }
   public void animate(Limb limb, int sTime) {
     float b = endRotation() + rotate;     //Initial angle
@@ -85,7 +93,7 @@ public class KeyFrame {
     return prev.endRotation() + prev.rotate;
   }
   public void remove(int t) {
-    if (hover(t)) {
+    if (hover()) {
       if (prev == null) return;
       prev.next = next;
       if (next != null) next.rotate += rotate;
@@ -97,7 +105,7 @@ public class KeyFrame {
   public void add(int _time, float _rotate) {
     if (_time > time) {
       if (next == null) {
-        next = new KeyFrame(_time, _rotate, this);
+        next = new KeyFrame(_time, _rotate, this, track, col);
       } else {
         next.add(_time, _rotate);
       }
@@ -105,10 +113,10 @@ public class KeyFrame {
       rotate += _rotate;
     } else {
       if (next == null) {
-        next = new KeyFrame(time, rotate, this);
+        next = new KeyFrame(time, rotate, this, track, col);
       } else {
         KeyFrame hold = next;
-        next = new KeyFrame(time, rotate, this);
+        next = new KeyFrame(time, rotate, this, track, col);
         hold.prev = next;
         next.next = hold;
       }

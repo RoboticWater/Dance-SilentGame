@@ -103,7 +103,7 @@ public void stateMachine() {
       activeScreen = null;
       break;
     case 3:
-      if (time < 1) {
+      if (globalTime < 1) {
         state = side ? 4 : 1;
         side = !side;
       }
