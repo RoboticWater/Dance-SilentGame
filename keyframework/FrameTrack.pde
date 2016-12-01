@@ -1,5 +1,5 @@
 public void frameTrack() {
-  if (mousePressed && ((mouseX >= width / 2 && mouseX <= width - trackHeight * 0.5 - 15) || scrubFocus) && focusedLimb == null) {
+  if (!inMenu && mousePressed && ((mouseX >= width / 2 && mouseX <= width - trackHeight * 0.5 - 15) || scrubFocus) && focusedLimb == null) {
     scrubFocus = true;
     doAnim = false;
     scrubber.loc = round(map(mouseX - width / 2, 0, ftWidth, 0, exerptLen) / beatLen) * beatLen;

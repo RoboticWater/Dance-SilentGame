@@ -29,12 +29,32 @@ public class JiggleLimb {
     fixedParticles = new Particle[_num][2];
     mesh(_num);
   }
+  //public void drawMesh() {
+  //  for (int i = particles.length - 1; i > 0; i--) {
+  //    //point(particles[i][0].position().x(), particles[i][0].position().y());
+  //    curveVertex(particles[i][0].position().x(), particles[i][0].position().y());
+  //  }
+  //  if (prev != null) prev.drawMesh();
+  //  for (int i = 0; i < particles.length; i++) {
+  //    //point(particles[i][1].position().x(), particles[i][1].position().y());
+  //    curveVertex(particles[i][1].position().x(), particles[i][1].position().y());
+  //  }
+  //}
   public void draw() {
     boolean root = prev == null;
     boolean tail = next == null;
-
-    fill(0);
-    stroke(0);
+    //if (tail) {
+    //  stroke(#3E4DCB);
+    //  fill(#3E4DCB);
+    //  strokeWeight(2);
+    //  beginShape();
+    //  curveVertex(particles[particles.length - 1][0].position().x(), particles[particles.length - 1][0].position().y());
+    //  drawMesh();
+    //  curveVertex(particles[particles.length - 1][1].position().x(), particles[particles.length - 1][1].position().y());
+    //  endShape(CLOSE);
+    //}
+    fill(#41BC47);
+    stroke(#41BC47);
     beginShape();
     curveVertex(particles[0][0].position().x(), particles[0][0].position().y());
     for (int i = 0; i < particles.length - 1; i++) {
@@ -48,6 +68,7 @@ public class JiggleLimb {
     }
     curveVertex(particles[0][1].position().x(), particles[0][1].position().y());
     endShape();
+
     if (root) arc(org.x, org.y, oSize, oSize, angle + HALF_PI, angle + HALF_PI + PI);
     //if (tail) arc(ext.x, ext.y, eSize, eSize, angle + HALF_PI + PI, angle + HALF_PI + TWO_PI);
     //pushMatrix();
@@ -63,7 +84,6 @@ public class JiggleLimb {
     //}
     //test++;
     //popMatrix();
-
   }
   public void update(float ox, float oy, float ex, float ey, float a) {
     boolean root = prev == null;
@@ -79,6 +99,7 @@ public class JiggleLimb {
     }
     for (int x = 1; x < particles.length; x++) {
       int n = tail ? particles.length - 1 : particles.length;
+      if (impulse) n = particles.length - 10;
       float tvx = map(x, 0, n, tops[0].x, tops[1].x);
       float tvy = map(x, 0, n, tops[0].y, tops[1].y);
       float bvx = map(x, 0, n, bots[0].x, bots[1].x);

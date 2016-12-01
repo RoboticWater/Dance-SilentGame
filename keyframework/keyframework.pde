@@ -8,9 +8,10 @@ import ddf.minim.ugens.*;
 //Screen
 PFont font;
 int state;
-color bgcol = #EF3C29;
-float bgsize;
-PImage bgimg;
+boolean inMenu = true;
+boolean curs = false;
+Screen activeScreen;
+boolean impulse = false;
 //Current Frame Data
 float dRot;
 float pN;
@@ -37,11 +38,13 @@ int songLen = 30000;
 int beatLen = 100;
 int exerptLen = 5000;
 int exerptOff = 0;
-
-int test = 0;
+//Turn Data
+boolean side = true;
+int time = 2000;
+int turnStart = 0;
+int MAX_TIME = 10000;
 void setup() {
   size(900, 700, P3D);
-  bgimg = loadImage("dance_title_screen.png");
   font = loadFont("LeagueGothic-Regular-48.vlw");
   physics = new ParticleSystem(0.1, 0.01);
   setDefaults();
@@ -52,16 +55,21 @@ void setup() {
   makeEvents();
 }
 void draw() {
-  test = 0;
   background(255);
-  frameTrack();
-  //stateMachine();
-  for (JiggleLimb j : jLimbs) {
-    j.draw();
+  if (state > -1) {
+    timer();
+    frameTrack();
+    //stateMachine();
+    if (impulse) dancer.draw();
+    for (JiggleLimb j : jLimbs) {
+      j.draw();
+    }
+    dancer.draw();
+    impulse = false;
+    physics.tick();
+    if (doAnim) scrubber.loc = millis() - animStartTime;
   }
-  dancer.draw();
-  physics.tick();
-  if (doAnim) scrubber.loc = millis() - animStartTime;
+  stateMachine();
   //fill(bgcol);
   //noStroke();
   //translate(0, 0, 1);
@@ -69,6 +77,7 @@ void draw() {
   //bgsize = lerp(bgsize, -1, 0.05);
 }
 void keyPressed() {
+  if (inMenu) return;
   if (key == ' ') {
     if (doAnim) {
       doAnim = false;
@@ -101,8 +110,7 @@ void mousePressed() {
 }
 public void setDefaults() {
   //Screen
-  state = 0;
-  bgsize = height;
+  state = -1;
   //Current Frame Data
   dRot   = 0;
   sAngle = 0;

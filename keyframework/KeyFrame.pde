@@ -15,7 +15,7 @@ public class KeyFrame {
   }
   public void draw(int track) {
     boolean h = (hover(track) || focusedFrames.contains(this)) && prev != null;
-    if (h && mousePressed && !scrubFocus) {
+    if (!inMenu && h && mousePressed && !scrubFocus) {
       if (!focusedFrames.contains(this)) focusedFrames.add(this);
       time = scrubber.loc;
     } else if (h) {

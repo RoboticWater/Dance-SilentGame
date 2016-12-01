@@ -29,7 +29,7 @@ public class Limb {
     else translate(parent.mag, 0);
     rotate(angle);
     boolean h = (hovered() && focusedLimb == null) || this == focusedLimb;
-    if (h) {
+    if (!inMenu && h) {
       strokeWeight(2);
       stroke(#ff1111);
       ellipse(mag, 0, 20, 20);
@@ -84,7 +84,7 @@ public class Limb {
     if (children.size() > 0) {
       for (Limb c : children) c.draw();
     } 
-    if (jLimb != null && update) {
+    if (jLimb != null && (update || impulse)) {
       jLimb.update(screenX(0, 0, 0), screenY(0, 0, 0), screenX(mag, 0, 0), screenY(mag, 0, 0), realAngle());
       update = false;
     }
