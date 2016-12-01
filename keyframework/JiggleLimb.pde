@@ -89,19 +89,31 @@ public class JiggleLimb {
       noStroke();
       PVector left = new PVector(particles[particles.length - 1][0].position().x(), particles[particles.length - 1][0].position().y());
       PVector right = new PVector(particles[particles.length - 1][1].position().x(), particles[particles.length - 1][1].position().y());
+      
       left.lerp(org, 0.47);
       right.lerp(org, 0.47);
       eyeSize = lerp(eyeSize, blink > millis() ? 0 : 7, 0.7);
+      float ang = parent.realAngle();
       pushMatrix();
       translate(left.x, left.y, 1);
-      rotate(parent.realAngle());
+      rotate(ang);
       ellipse(0, 0, eyeSize, 7);
       popMatrix();
       pushMatrix();
       translate(right.x, right.y, 1);
-      rotate(parent.realAngle());
+      rotate(ang);
       ellipse(0, 0, eyeSize, 7);
       popMatrix();
+      if (doStache) {
+        PVector mid = left.get();
+        mid.lerp(right, 0.5);
+        mid.lerp(org, 0.35);
+        pushMatrix();
+        translate(mid.x, mid.y, 1);
+        rotate(ang +HALF_PI);
+        image(stache, -15, 0, 30, 10);
+        popMatrix();
+      }
     }
   }
   public void update(float ox, float oy, float ex, float ey, float a) {

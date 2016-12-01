@@ -80,6 +80,7 @@ public void stateMachine() {
   switch (state) {
     case -1:
       activeScreen = screens.get(0);
+      activeScreen.bgsize = height;
       screens.get(0).show = true;
       inMenu = true;
       break;
@@ -106,6 +107,7 @@ public void stateMachine() {
       if (globalTime < 1) {
         state = side ? 4 : 1;
         side = !side;
+        exerptOff += exerptLen;
       }
       break;
     case 4:
@@ -131,8 +133,8 @@ public void stateMachine() {
 public void makeEvents() {
   screens = new ArrayList();
   screens.add(new Screen(#EF3C29, loadImage("dance_title_screen.png"), -1,
-                         new TextEvent("Start", width - 150, height + 200, width - 150, height - 90, 0.05, true, 1),
-                         new TextEvent("Instructions", width + 200, height - 150, width - 190, height - 150, 0.04, true, 5)));
+                         new TextEvent("Start", width - 205, height + 200, width - 205, height - 90, 0.05, true, 1),
+                         new TextEvent("Instructions", width + 200, height - 150, width - 250, height - 150, 0.04, true, 5)));
   screens.add(new Screen(#EF3C29, null, 2,
                          new TextEvent("Animator A's Turn", width / 2 - 120, height + 100, width / 2 - 120, height / 2, 0.04, false, 3), 
                          new TextEvent("(Click to Continue...)", -900, height / 2 + 50, width / 2 - 140, height / 2 + 50, 0.003, false, 3)));

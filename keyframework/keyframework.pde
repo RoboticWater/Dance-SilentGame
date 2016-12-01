@@ -12,8 +12,14 @@ boolean inMenu = true;
 boolean curs = false;
 Screen activeScreen;
 boolean impulse = false;
+//Accessories
 int blink = 0;
 float eyeSize = 7;
+PImage stache;
+boolean doStache = false;
+//int floorFired = 0;
+//ArrayList<Tile> tiles = new ArrayList();
+//ArrayList<Tile> trash = new ArrayList();
 //Current Frame Data
 float dRot;
 float pN;
@@ -44,10 +50,11 @@ int exerptOff = 0;
 boolean side = true;
 int globalTime = 2000;
 int turnStart = 0;
-int MAX_TIME = 120000;
+int MAX_TIME = 5 * 60000 + 2000;
 void setup() {
   size(900, 700, P3D);
   font = loadFont("LeagueGothic-Regular-48.vlw");
+  stache = loadImage("stache.png");
   physics = new ParticleSystem(0.1, 0.01);
   setDefaults();
   //String[] args = {"Frame Track"};
@@ -59,6 +66,14 @@ void setup() {
 void draw() {
   if (random(0, 1) > 0.995 && blink < millis()) blink = millis() + 200;
   background(255);
+  //for (Tile t : tiles) {
+  //  t.draw();
+  //  if (saturation(t.col) < 8) trash.add(t);
+  //}
+  //for (Tile t : trash) {
+  //  tiles.remove(t);
+  //}
+  //trash = new ArrayList();
   if (state > -1) {
     timer();
     frameTrack();
@@ -70,7 +85,20 @@ void draw() {
     dancer.draw();
     impulse = false;
     physics.tick();
-    if (doAnim) scrubber.loc = millis() - animStartTime;
+    if (doAnim) {
+      scrubber.loc = millis() - animStartTime;
+      //if (scrubber.loc > floorFired) {
+      //  floorFired = scrubber.loc + 8*beatLen;
+      //  for(int i = 0; i < 20; i++) {
+      //    colorMode(HSB);
+      //    tiles.add(new Tile(int(random(0, 10)), int(random(0, 10)), color(random(0, 5) * 10 + 100, 250, 255)));
+      //    colorMode(RGB);
+      //  }
+      //}
+    }
+    //else {
+    //  floorFired = 0;
+    //}
   }
   stateMachine();
   //fill(bgcol);
@@ -89,6 +117,8 @@ void keyPressed() {
       doAnim = true;
       animStartTime = millis();
     }
+  } else if (key == 's') {
+    doStache = !doStache;
   }
 }
 void mouseReleased() {
@@ -137,3 +167,21 @@ public void setDefaults() {
     frameTracks.put(l, new KeyFrame(0, l.angle, i++, l.col));
   }
 }
+
+//public class Tile {
+//  PVector pos;
+//  color col;
+//  public Tile(int x, int y, color col) {
+//    pos = new PVector(x, y);
+//    this.col = col;
+//  }
+//  public void draw() {
+//    pushMatrix();
+//    translate(pos.x * width / 20, height, -pos.y * width / 20);
+//    rotateX(HALF_PI);
+//    fill(col);
+//    rect(0, 0, width / 20, width / 20);
+//    col = lerpColor(col, #ffffff, 0.05);
+//    popMatrix();
+//  }
+//}
