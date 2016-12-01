@@ -39,7 +39,7 @@ public class Limb {
       noFill();
       if (dRot >= 0) arc(0, 0, mag * 2, mag * 2, -dRot, 0);
       else arc(0, 0, mag * 2, mag * 2, 0, -dRot);
-      if (mousePressed && !scrubFocus) {
+      if (mousePressed && !scrubFocus && !doAnim) {
         if (focusedLimb == null) {
           sAngle = angle;
           focusedLimb = this;
@@ -79,7 +79,7 @@ public class Limb {
     noFill();
     stroke(h ? lerpColor(col, #ffffff, 0.7) : col);
     strokeWeight(6);
-    ellipse(mag, 0, 3, 3);
+    if (!doAnim) ellipse(mag, 0, 3, 3);
     //line(0, 0, mag, 0);
     if (children.size() > 0) {
       for (Limb c : children) c.draw();

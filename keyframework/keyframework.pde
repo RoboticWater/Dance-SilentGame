@@ -12,6 +12,8 @@ boolean inMenu = true;
 boolean curs = false;
 Screen activeScreen;
 boolean impulse = false;
+int blink = 0;
+float eyeSize = 7;
 //Current Frame Data
 float dRot;
 float pN;
@@ -55,6 +57,7 @@ void setup() {
   makeEvents();
 }
 void draw() {
+  if (random(0, 1) > 0.995 && blink < millis()) blink = millis() + 200;
   background(255);
   if (state > -1) {
     timer();
