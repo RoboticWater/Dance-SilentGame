@@ -25,12 +25,12 @@ public class KeyFrame {
       if (!focusedFrames.contains(this)) focusedFrames.add(this);
       time = scrubber.loc;
       if (time > (next == null ? time : next.time)) swap(next);
-      else if (time < (prev == null) ? 0 : prev.time) swap(prev);
+      else if (time < (prev == null ? 0 : prev.time)) swap(prev);
     } else if (h) {
-      if (time > (next == null) ? time : next.time) swap(next);
-      else if (time < (prev == null) ? 0 : prev.time) swap(prev);
-      if (time != 0 && time == (prev == null) ? -1 : prev.time) overwrite(prev);
-      if (time != 0 && time == (next == null) ? -1 : next.time) overwrite(next);
+      if (time > (next == null ? time : next.time)) swap(next);
+      else if (time < (prev == null ? 0 : prev.time)) swap(prev);
+      if (time != 0 && time == (prev == null ? -1 : prev.time)) overwrite(prev);
+      if (time != 0 && time == (next == null ? -1 : next.time)) overwrite(next);
       focusedFrames.remove(this);
     }
     if (prev != null) {
@@ -60,7 +60,7 @@ public class KeyFrame {
       
     }
   }
-  public void swap(keyFrame k) {
+  public void swap(KeyFrame k) {
     if (k == next) {
       next = next.next;
       next.prev = prev;
