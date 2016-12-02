@@ -24,7 +24,7 @@ public class KeyFrame {
     if (!inMenu && h && mousePressed && !scrubFocus) {
       if (!focusedFrames.contains(this)) focusedFrames.add(this);
       time = scrubber.loc;
-      if (time > (next == null) ? time : next.time) swap(next);
+      if (time > (next == null ? time : next.time)) swap(next);
       else if (time < (prev == null) ? 0 : prev.time) swap(prev);
     } else if (h) {
       if (time > (next == null) ? time : next.time) swap(next);
