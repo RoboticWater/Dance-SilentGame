@@ -2,6 +2,7 @@ public class KeyFrame {
   int      time;
   int     track;
   float  rotate;
+  float    size;
   KeyFrame next;
   KeyFrame prev;
   color     col;
@@ -23,7 +24,13 @@ public class KeyFrame {
     if (!inMenu && h && mousePressed && !scrubFocus) {
       if (!focusedFrames.contains(this)) focusedFrames.add(this);
       time = scrubber.loc;
+      if (time > (next == null) ? time : next.time) swap(next);
+      else if (time < (prev == null) ? 0 : prev.time) swap(prev);
     } else if (h) {
+      if (time > (next == null) ? time : next.time) swap(next);
+      else if (time < (prev == null) ? 0 : prev.time) swap(prev);
+      if (time != 0 && time == (prev == null) ? -1 : prev.time) overwrite(prev);
+      if (time != 0 && time == (next == null) ? -1 : next.time) overwrite(next);
       focusedFrames.remove(this);
     }
     if (prev != null) {
@@ -34,7 +41,8 @@ public class KeyFrame {
       noFill();
       strokeWeight(1.5);
       stroke(h ? 255 : col);
-      rect(0, 0, trackHeight * 0.3, trackHeight * 0.3);
+      size = lerp(size, trackHeight * 0.3, 0.17);
+      rect(0, 0, size, size);
       popMatrix();
     }
     if (next != null) next.draw();
@@ -44,6 +52,26 @@ public class KeyFrame {
   }
   public boolean trackHover() {
     return hover() ? true : (next == null ? false : next.trackHover());
+  }
+  public void overwrite(KeyFrame k) {
+    if (k == next) {
+      
+    } else {
+      
+    }
+  }
+  public void swap(keyFrame k) {
+    if (k == next) {
+      next = next.next;
+      next.prev = prev;
+      next.next = this;
+      prev = k;
+    } else {
+      prev = prev.prev;
+      prev.next = next;
+      prev.prev = this;
+      next = k;
+    }
   }
   public void animate(Limb limb, int sTime) {
     float b = endRotation() + rotate;     //Initial angle

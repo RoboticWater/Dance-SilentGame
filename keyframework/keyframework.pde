@@ -1,9 +1,5 @@
 import ddf.minim.*;
-import ddf.minim.analysis.*;
 import ddf.minim.effects.*;
-import ddf.minim.signals.*;
-import ddf.minim.spi.*;
-import ddf.minim.ugens.*;
 
 //Screen
 PFont font;
@@ -37,11 +33,16 @@ Scrubber scrubber;
 ArrayList<JiggleLimb> jLimbs;
 //FrameTrack
 HashMap<Limb, KeyFrame> frameTracks;
+HashMap<Limb, KeyFrame> finalTrack;
 float ftWidth, ftX;
 float trackHeight;
 boolean down;
 boolean scrubFocus = false;
 //Song Data
+Minim minim;
+AudioPlayer player;
+String curSong;
+ArrayList<String> songList;
 int songLen = 30000;
 int beatLen = 100;
 int exerptLen = 5000;
@@ -55,29 +56,19 @@ void setup() {
   size(900, 700, P3D);
   font = loadFont("LeagueGothic-Regular-48.vlw");
   stache = loadImage("stache.png");
+  minim = new Minim(this);
   physics = new ParticleSystem(0.1, 0.01);
-  setDefaults();
-  //String[] args = {"Frame Track"};
-  //PApplet.runSketch(args, frameTrack);
   setDefaults();
   textFont(font, 48);
   makeEvents();
+  smooth(16);
 }
 void draw() {
   if (random(0, 1) > 0.995 && blink < millis()) blink = millis() + 200;
-  background(255);
-  //for (Tile t : tiles) {
-  //  t.draw();
-  //  if (saturation(t.col) < 8) trash.add(t);
-  //}
-  //for (Tile t : trash) {
-  //  tiles.remove(t);
-  //}
-  //trash = new ArrayList();
+  background(state > -1 ? 255 : #EF3C29);
   if (state > -1) {
     timer();
     frameTrack();
-    //stateMachine();
     if (impulse) dancer.draw();
     for (JiggleLimb j : jLimbs) {
       j.draw();
@@ -87,25 +78,9 @@ void draw() {
     physics.tick();
     if (doAnim) {
       scrubber.loc = millis() - animStartTime;
-      //if (scrubber.loc > floorFired) {
-      //  floorFired = scrubber.loc + 8*beatLen;
-      //  for(int i = 0; i < 20; i++) {
-      //    colorMode(HSB);
-      //    tiles.add(new Tile(int(random(0, 10)), int(random(0, 10)), color(random(0, 5) * 10 + 100, 250, 255)));
-      //    colorMode(RGB);
-      //  }
-      //}
     }
-    //else {
-    //  floorFired = 0;
-    //}
   }
   stateMachine();
-  //fill(bgcol);
-  //noStroke();
-  //translate(0, 0, 1);
-  //rect(0, 0, width, bgsize);
-  //bgsize = lerp(bgsize, -1, 0.05);
 }
 void keyPressed() {
   if (inMenu) return;
@@ -167,21 +142,3 @@ public void setDefaults() {
     frameTracks.put(l, new KeyFrame(0, l.angle, i++, l.col));
   }
 }
-
-//public class Tile {
-//  PVector pos;
-//  color col;
-//  public Tile(int x, int y, color col) {
-//    pos = new PVector(x, y);
-//    this.col = col;
-//  }
-//  public void draw() {
-//    pushMatrix();
-//    translate(pos.x * width / 20, height, -pos.y * width / 20);
-//    rotateX(HALF_PI);
-//    fill(col);
-//    rect(0, 0, width / 20, width / 20);
-//    col = lerpColor(col, #ffffff, 0.05);
-//    popMatrix();
-//  }
-//}
